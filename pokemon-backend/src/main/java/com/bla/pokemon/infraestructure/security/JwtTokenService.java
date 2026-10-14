@@ -44,6 +44,7 @@ public class JwtTokenService implements TokenService {
                         ChronoUnit.MINUTES
                 ))
                 .claim("email", user.email())
+                .claim("username", user.username())
                 .claim("roles", List.of(user.role()))
                 .build();
 
