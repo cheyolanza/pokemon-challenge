@@ -1,0 +1,13 @@
+
+CREATE TABLE app_users (
+   id UUID PRIMARY KEY,
+   username VARCHAR(100) NOT NULL UNIQUE,
+   email VARCHAR(255) NOT NULL UNIQUE,
+   password_hash VARCHAR(255) NOT NULL,
+   role VARCHAR(30) NOT NULL DEFAULT 'USER',
+   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_app_users_email
+    ON app_users(email);

@@ -1,4 +1,3 @@
-
 package com.bla.pokemon.presentation.response;
 
 import com.bla.pokemon.domain.model.Pokemon;

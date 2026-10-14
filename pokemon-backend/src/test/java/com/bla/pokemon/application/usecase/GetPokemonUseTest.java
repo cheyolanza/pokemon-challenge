@@ -1,4 +1,3 @@
-
 package com.bla.pokemon.application.usecase;
 
 import com.bla.pokemon.application.port.PokeApiGateway;

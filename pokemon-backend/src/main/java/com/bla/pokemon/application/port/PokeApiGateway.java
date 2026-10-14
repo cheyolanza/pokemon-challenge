@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface PokeApiGateway {
 
     Optional<Pokemon> findById(Long id);
+    PageResult<Pokemon> findAll(int page, int size);
 }

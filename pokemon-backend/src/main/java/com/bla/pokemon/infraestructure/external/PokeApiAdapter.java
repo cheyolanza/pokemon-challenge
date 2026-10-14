@@ -1,6 +1,6 @@
-
 package com.bla.pokemon.infraestructure.external;
 
+import com.bla.pokemon.application.port.PageResult;
 import com.bla.pokemon.application.port.PokeApiGateway;
 import com.bla.pokemon.domain.model.Pokemon;
 
@@ -54,6 +54,75 @@ public class PokeApiAdapter implements PokeApiGateway {
             throw ex;
         }
     }
+
+
+    @Override
+    public PageResult<Pokemon> findAll(int page, int size) {
+
+        int offset = Math.toIntExact((long) page * size);
+
+        PokemonListApiResponse response = restClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/pokemon")
+                        .queryParam("offset", offset)
+                        .queryParam("limit", size)
+                        .build())
+                .retrieve()
+                .body(PokemonListApiResponse.class);
+
+        if (response == null || response.results() == null
+                || response.count() == null) {
+            throw new IllegalStateException(
+                    "Invalid list response from PokeAPI"
+            );
+        }
+
+        List<Pokemon> pokemon = response.results()
+                .stream()
+                .map(item -> {
+                    Long id = extractId(item.url());
+
+                    return findById(id).orElseThrow(
+                            () -> new IllegalStateException(
+                                    "Pokemon disappeared: " + id
+                            )
+                    );
+                })
+                .toList();
+
+        int totalPages = (int) Math.ceil(
+                (double) response.count() / size
+        );
+
+        return new PageResult<>(
+                pokemon,
+                page,
+                size,
+                response.count(),
+                totalPages
+        );
+    }
+
+    private Long extractId(String url) {
+        String normalized = url.endsWith("/")
+                ? url.substring(0, url.length() - 1)
+                : url;
+
+        return Long.parseLong(
+                normalized.substring(normalized.lastIndexOf('/') + 1)
+        );
+    }
+
+    public record PokemonListApiResponse(
+            Integer count,
+            List<PokemonListItem> results
+    ) {}
+
+    public record PokemonListItem(
+            String name,
+            String url
+    ) {}
+
 
     public record PokemonApiResponse(
             Long id,

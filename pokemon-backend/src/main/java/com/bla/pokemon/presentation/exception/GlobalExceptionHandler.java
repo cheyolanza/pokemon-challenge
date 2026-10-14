@@ -1,4 +1,3 @@
-
 package com.bla.pokemon.presentation.exception;
 
 import com.bla.pokemon.domain.exception.PokemonNotFoundException;
